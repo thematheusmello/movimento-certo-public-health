@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 
-// Reviewed production release G4vqwPXF; update fingerprints only with a reviewed release.
+// Reviewed production source f5dfb88 (Sentry-only homepage instrumentation); update fingerprints only with a reviewed release.
 export const RELEASE_ASSETS = [
   ['home', 'https://movimentocerto.app/', '0ad4a8b99f867cccad07c31a283b7a067b5fa44f1883c9cd145b519c639546d8'],
   ['config', 'https://movimentocerto.app/assets/config.js?v=12', 'c179fda924a58206f15c4096e9e01e90b603f720aed1d85fc4aeb4ef29e1e19d'],
