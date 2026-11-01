@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 
 // Reviewed production release G4vqwPXF; update fingerprints only with a reviewed release.
 export const RELEASE_ASSETS = [
-  ['home', 'https://movimentocerto.app/', 'c08cff7963a4e370dc68e99e556cd8597bf421a407b99a8c7ae288c01988abfd'],
+  ['home', 'https://movimentocerto.app/', '0ad4a8b99f867cccad07c31a283b7a067b5fa44f1883c9cd145b519c639546d8'],
   ['config', 'https://movimentocerto.app/assets/config.js?v=12', 'c179fda924a58206f15c4096e9e01e90b603f720aed1d85fc4aeb4ef29e1e19d'],
   ['script', 'https://movimentocerto.app/assets/site.js?v=12', 'dfb4f7b4bf607c172ea5b39bfd4078aa39e6b22abe5ad5879306d8cc0d13eb0b'],
   ['styles', 'https://movimentocerto.app/assets/site.css?v=11', '31a2d4947a7de68ead285da81726ed9d90cb953421f955be405bfce0d72f9636'],
