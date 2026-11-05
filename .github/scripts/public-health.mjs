@@ -53,8 +53,10 @@ export async function checkPublicSite(fetcher = fetch) {
   }));
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+export async function runPublicSiteCheck() {
   const checks = await checkPublicSite();
   console.log(JSON.stringify({ checkedAt: new Date().toISOString(), checks }));
   if (checks.some(check => !check.ok)) process.exitCode = 1;
 }
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await runPublicSiteCheck();
