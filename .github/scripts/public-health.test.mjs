@@ -8,7 +8,7 @@ const now = Date.parse('2026-10-23T20:00:00Z');
 const stats = { ok: true, founders: 0, waitlist: 0, updated_at: new Date(now).toISOString() };
 const home = readFileSync(new URL('../../waitlist-site/index.html', import.meta.url), 'utf8');
 const assets = new Map(RELEASE_ASSETS.map(([name, url, hash]) => {
-  const path = name === 'home' ? 'index.html' : new URL(url).pathname.slice(1);
+  const path = name === 'home' ? 'index.html' : name === 'thanks' ? 'obrigado.html' : new URL(url).pathname.slice(1);
   const body = readFileSync(new URL(`../../waitlist-site/${path}`, import.meta.url), 'utf8');
   assert.equal(createHash('sha256').update(body).digest('hex'), hash, `reviewed ${name} artifact`);
   return [url, body];
@@ -51,6 +51,20 @@ test('only the fixed public release assets and aggregate endpoint are requested'
   assert.deepEqual(checks, [...RELEASE_ASSETS.map(([check]) => ({ check, ok: true })), { check: 'stats', ok: true }]);
   assert.deepEqual(requests.map(r => r.url), [...assets.keys(), 'https://movimentocerto.app/api/stats']);
   assert.ok(requests.every(r => r.options.redirect === 'error' && !r.options.method && r.options.signal));
+});
+
+test('reviewed thank-you copy is part of the release fingerprint', async () => {
+  const thanks = 'https://movimentocerto.app/obrigado';
+  const checks = await checkPublicSite(async url => {
+    if (url !== thanks) return healthyResponse(url);
+    return new Response(assets.get(url).replace(
+      'Se o recibo da Stripe não chegar por e-mail',
+      'O recibo da Stripe chega no seu e-mail'
+    ));
+  });
+  assert.deepEqual(checks.find(check => check.check === 'thanks'),
+    { check: 'thanks', ok: false, reason: 'thanks_source' });
+  assert.ok(checks.filter(check => check.check !== 'thanks').every(check => check.ok));
 });
 
 test('configured deadline regression is caught even while all HTML fallbacks stay correct', async () => {
