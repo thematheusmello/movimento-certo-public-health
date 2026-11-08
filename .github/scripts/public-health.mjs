@@ -1,9 +1,11 @@
 import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 
-// Reviewed homepage ff5884a61409 (privacy setup v2); change fingerprints only with a reviewed release.
+// Reviewed homepage ff5884a61409 (privacy setup v2) and thank-you 43fc19f4eca3 (truthful receipt fallback);
+// change fingerprints only with a reviewed release.
 export const RELEASE_ASSETS = [
   ['home', 'https://movimentocerto.app/', 'ff5884a61409938f05727184097c240a8a3e85f70dbb8216694671cd82819ecc'],
+  ['thanks', 'https://movimentocerto.app/obrigado', '43fc19f4eca34ac4723a3793063ca44165b9afce6b35c2a2efd94344983afa60'],
   ['config', 'https://movimentocerto.app/assets/config.js?v=12', 'c179fda924a58206f15c4096e9e01e90b603f720aed1d85fc4aeb4ef29e1e19d'],
   ['script', 'https://movimentocerto.app/assets/site.js?v=12', 'dfb4f7b4bf607c172ea5b39bfd4078aa39e6b22abe5ad5879306d8cc0d13eb0b'],
   ['styles', 'https://movimentocerto.app/assets/site.css?v=11', '31a2d4947a7de68ead285da81726ed9d90cb953421f955be405bfce0d72f9636'],
@@ -25,9 +27,9 @@ export function homeProblem(html) {
     && createHash('sha256').update(html).digest('hex') === RELEASE_ASSETS[0][2] ? null : 'home_copy';
 }
 
-export async function checkPublicSite(fetcher = fetch) {
+export async function checkPublicSite(fetcher = fetch, releaseAssets = RELEASE_ASSETS) {
   return Promise.all([
-    ...RELEASE_ASSETS,
+    ...releaseAssets,
     ['stats', 'https://movimentocerto.app/api/stats'],
   ].map(async ([check, url, expectedHash]) => {
     try {
