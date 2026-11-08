@@ -27,9 +27,9 @@ export function homeProblem(html) {
     && createHash('sha256').update(html).digest('hex') === RELEASE_ASSETS[0][2] ? null : 'home_copy';
 }
 
-export async function checkPublicSite(fetcher = fetch) {
+export async function checkPublicSite(fetcher = fetch, releaseAssets = RELEASE_ASSETS) {
   return Promise.all([
-    ...RELEASE_ASSETS,
+    ...releaseAssets,
     ['stats', 'https://movimentocerto.app/api/stats'],
   ].map(async ([check, url, expectedHash]) => {
     try {
