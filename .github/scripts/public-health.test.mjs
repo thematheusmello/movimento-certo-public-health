@@ -7,14 +7,19 @@ import { checkPublicSite, homeProblem, statsProblem, RELEASE_ASSETS } from './pu
 const now = Date.parse('2026-10-23T20:00:00Z');
 const stats = { ok: true, founders: 0, waitlist: 0, updated_at: new Date(now).toISOString() };
 const home = readFileSync(new URL('../../waitlist-site/index.html', import.meta.url), 'utf8');
-const assets = new Map(RELEASE_ASSETS.map(([name, url, hash]) => {
-  const path = name === 'home' ? 'index.html' : name === 'thanks' ? 'obrigado.html' : new URL(url).pathname.slice(1);
-  const body = readFileSync(new URL(`../../waitlist-site/${path}`, import.meta.url), 'utf8');
+const thanksFixture = '<p>Se o recibo da Stripe não chegar por e-mail</p>';
+const TEST_RELEASE_ASSETS = RELEASE_ASSETS.map(([name, url, hash]) => name === 'thanks'
+  ? [name, url, createHash('sha256').update(thanksFixture).digest('hex')] : [name, url, hash]);
+const assets = new Map(TEST_RELEASE_ASSETS.map(([name, url, hash]) => {
+  const path = name === 'home' ? 'index.html' : new URL(url).pathname.slice(1);
+  const body = name === 'thanks' ? thanksFixture
+    : readFileSync(new URL(`../../waitlist-site/${path}`, import.meta.url), 'utf8');
   assert.equal(createHash('sha256').update(body).digest('hex'), hash, `reviewed ${name} artifact`);
   return [url, body];
 }));
 const healthyResponse = url => url.endsWith('/api/stats')
   ? Response.json({ ...stats, updated_at: new Date().toISOString() }) : new Response(assets.get(url));
+const checkTestSite = fetcher => checkPublicSite(fetcher, TEST_RELEASE_ASSETS);
 
 test('zero counts are healthy but HTTP-200 provider failures are not', () => {
   assert.equal(statsProblem(stats, now), null);
@@ -44,7 +49,7 @@ test('the current presale copy is checked instead of any HTTP-200 page', () => {
 
 test('only the fixed public release assets and aggregate endpoint are requested', async () => {
   const requests = [];
-  const checks = await checkPublicSite(async (url, options) => {
+  const checks = await checkTestSite(async (url, options) => {
     requests.push({ url, options });
     return healthyResponse(url);
   });
@@ -55,7 +60,10 @@ test('only the fixed public release assets and aggregate endpoint are requested'
 
 test('reviewed thank-you copy is part of the release fingerprint', async () => {
   const thanks = 'https://movimentocerto.app/obrigado';
-  const checks = await checkPublicSite(async url => {
+  assert.deepEqual(RELEASE_ASSETS.find(([name]) => name === 'thanks'), [
+    'thanks', thanks, '43fc19f4eca34ac4723a3793063ca44165b9afce6b35c2a2efd94344983afa60'
+  ]);
+  const checks = await checkTestSite(async url => {
     if (url !== thanks) return healthyResponse(url);
     return new Response(assets.get(url).replace(
       'Se o recibo da Stripe não chegar por e-mail',
@@ -72,7 +80,7 @@ test('configured deadline regression is caught even while all HTML fallbacks sta
   const configUrl = RELEASE_ASSETS.find(([name]) => name === 'config')[1];
   const wrong = assets.get(configUrl).replace("founderDeadline: '29 de novembro'", "founderDeadline: '8 de novembro'");
   assert.notEqual(wrong, assets.get(configUrl));
-  const checks = await checkPublicSite(async url => url === configUrl ? new Response(wrong) : healthyResponse(url));
+  const checks = await checkTestSite(async url => url === configUrl ? new Response(wrong) : healthyResponse(url));
   assert.deepEqual(checks.find(r => r.check === 'config'), { check: 'config', ok: false, reason: 'config_source' });
   assert.ok(checks.filter(r => r.check !== 'config').every(r => r.ok));
 });
@@ -80,17 +88,17 @@ test('configured deadline regression is caught even while all HTML fallbacks sta
 test('one wrong HTML fallback, changed runtime or CSS cannot hide behind other correct strings', async () => {
   for (const [name, url] of RELEASE_ASSETS.filter(([name]) => name !== 'config')) {
     const changed = name === 'home' ? assets.get(url).replace('29 de novembro', '8 de novembro') : assets.get(url) + '\n/* unreviewed */';
-    const checks = await checkPublicSite(async candidate => candidate === url ? new Response(changed) : healthyResponse(candidate));
+    const checks = await checkTestSite(async candidate => candidate === url ? new Response(changed) : healthyResponse(candidate));
     assert.equal(checks.find(r => r.check === name).reason, `${name}_source`);
   }
 });
 
 test('HTTP errors, invalid JSON and request failures expose only static reasons', async () => {
-  const denied = await checkPublicSite(async () => new Response('private_fixture', { status: 503 }));
+  const denied = await checkTestSite(async () => new Response('private_fixture', { status: 503 }));
   assert.ok(denied.every(r => !r.ok && r.reason === 'http_status'));
-  const invalid = await checkPublicSite(async url => url.endsWith('/api/stats') ? new Response('private_fixture') : healthyResponse(url));
+  const invalid = await checkTestSite(async url => url.endsWith('/api/stats') ? new Response('private_fixture') : healthyResponse(url));
   assert.equal(invalid.find(r => r.check === 'stats').reason, 'stats_json');
-  const failed = await checkPublicSite(async () => { throw new Error('private_fixture'); });
+  const failed = await checkTestSite(async () => { throw new Error('private_fixture'); });
   assert.ok(failed.every(r => !r.ok && r.reason === 'request_failed'));
   assert.equal(JSON.stringify([denied, invalid, failed]).includes('private_fixture'), false);
 });
