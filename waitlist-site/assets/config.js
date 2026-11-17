@@ -6,8 +6,8 @@ window.MC_CONFIG = {
   founderGoal: 50,                         // research of 8 Oct: ~1 in 3 odds at R$ 97 (100 was ~1 in 10)
   priceMonthly: 'R$ 29,90',                // planned prices after launch, shown as the anchor
   priceYearly: 'R$ 199,90',
-  founderDeadline: '29 de novembro',
-  founderDeadlineISO: '2026-11-29T23:59:59-03:00',
+  founderDeadline: '12 de dezembro',
+  founderDeadlineISO: '2026-12-12T20:00:15-03:00',
   showFoundersFrom: 10,                    // the live "X fundadores" bar appears from this many founders
   showWaitlistCountFrom: 50,               // "Já são X pessoas na lista" appears from this many signups
   launchEstimate: 'fevereiro de 2027',

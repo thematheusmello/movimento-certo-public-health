@@ -42,7 +42,7 @@ test('invalid counts, missing evidence and stale/future responses fail closed', 
 
 test('the current presale copy is checked instead of any HTTP-200 page', () => {
   assert.equal(homeProblem(home), null);
-  for (const value of ['', '<html>Sign in</html>', home.replace('29 de novembro', '8 de novembro'), home + ' elabora a sequência']) {
+  for (const value of ['', '<html>Sign in</html>', home.replace('12 de dezembro', '8 de novembro'), home + ' elabora a sequência']) {
     assert.equal(homeProblem(value), 'home_copy');
   }
 });
@@ -61,7 +61,7 @@ test('only the fixed public release assets and aggregate endpoint are requested'
 test('reviewed thank-you copy is part of the release fingerprint', async () => {
   const thanks = 'https://movimentocerto.app/obrigado';
   assert.deepEqual(RELEASE_ASSETS.find(([name]) => name === 'thanks'), [
-    'thanks', thanks, '43fc19f4eca34ac4723a3793063ca44165b9afce6b35c2a2efd94344983afa60'
+    'thanks', thanks, '82c895c30ac30a3b4c62a7358e75dc8b1f5d34f657c1bef69ad264ede0fcc23d'
   ]);
   const checks = await checkTestSite(async url => {
     if (url !== thanks) return healthyResponse(url);
@@ -78,7 +78,7 @@ test('reviewed thank-you copy is part of the release fingerprint', async () => {
 test('configured deadline regression is caught even while all HTML fallbacks stay correct', async () => {
   assert.ok(home.includes('data-cfg="founderDeadline"'));
   const configUrl = RELEASE_ASSETS.find(([name]) => name === 'config')[1];
-  const wrong = assets.get(configUrl).replace("founderDeadline: '29 de novembro'", "founderDeadline: '8 de novembro'");
+  const wrong = assets.get(configUrl).replace("founderDeadline: '12 de dezembro'", "founderDeadline: '8 de novembro'");
   assert.notEqual(wrong, assets.get(configUrl));
   const checks = await checkTestSite(async url => url === configUrl ? new Response(wrong) : healthyResponse(url));
   assert.deepEqual(checks.find(r => r.check === 'config'), { check: 'config', ok: false, reason: 'config_source' });
@@ -87,7 +87,7 @@ test('configured deadline regression is caught even while all HTML fallbacks sta
 
 test('one wrong HTML fallback, changed runtime or CSS cannot hide behind other correct strings', async () => {
   for (const [name, url] of RELEASE_ASSETS.filter(([name]) => name !== 'config')) {
-    const changed = name === 'home' ? assets.get(url).replace('29 de novembro', '8 de novembro') : assets.get(url) + '\n/* unreviewed */';
+    const changed = name === 'home' ? assets.get(url).replace('12 de dezembro', '8 de novembro') : assets.get(url) + '\n/* unreviewed */';
     const checks = await checkTestSite(async candidate => candidate === url ? new Response(changed) : healthyResponse(candidate));
     assert.equal(checks.find(r => r.check === name).reason, `${name}_source`);
   }
