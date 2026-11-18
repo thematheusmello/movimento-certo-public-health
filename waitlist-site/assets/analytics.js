@@ -51,8 +51,26 @@
     try { return localStorage.getItem(choiceKey); } catch (_) { return null; }
   }
 
-  function event(name) {
-    if (accepted) gtag('event', name, { send_to: id, ...page });
+  function event(name, options) {
+    if (accepted) gtag('event', name, { send_to: id, ...page, ...options });
+  }
+
+  function checkoutClick(navigate) {
+    if (!accepted) return false;
+    if (!navigate) {
+      event('checkout_click');
+      return false;
+    }
+    let finished = false;
+    function proceed() {
+      if (finished) return;
+      finished = true;
+      clearTimeout(fallback);
+      navigate();
+    }
+    const fallback = setTimeout(proceed, 500);
+    event('checkout_click', { event_callback: proceed, event_timeout: 500 });
+    return true;
   }
 
   function gtag() {
@@ -130,6 +148,6 @@
   });
   window.addEventListener('pageshow', (show) => { if (show.persisted) sync(); });
   settings.hidden = false;
-  window.MC_ANALYTICS = { checkoutClick: () => event('checkout_click') };
+  window.MC_ANALYTICS = { checkoutClick };
   sync();
 }());

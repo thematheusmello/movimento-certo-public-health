@@ -82,11 +82,22 @@
     a.textContent = 'Abrindo o pagamento...';
   }
   $all('#checkout-btn, [data-checkout-link]').forEach(function (a) {
-    a.addEventListener('click', function () {
+    a.addEventListener('click', function (event) {
       syncOffer();
-      if (!open) return;
+      if (!open || (event && event.defaultPrevented)) return;
+      if (a.getAttribute('aria-disabled') === 'true') {
+        if (event) event.preventDefault();
+        return;
+      }
+      var analytics = window.MC_ANALYTICS;
+      var sameTab = event && !(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        && (!a.target || a.target === '_self');
+      if (analytics && !sameTab) {
+        analytics.checkoutClick();
+        return;
+      }
       busy(a);
-      if (window.MC_ANALYTICS) window.MC_ANALYTICS.checkoutClick();
+      if (analytics && analytics.checkoutClick(function () { location.assign(a.href); })) event.preventDefault();
     });
   });
   $all('[data-founder-cta]').forEach(function (a) { a.addEventListener('click', syncOffer); });
