@@ -4,12 +4,12 @@ import { createHash } from 'node:crypto';
 // Reviewed thirty-day campaign calendar with previous-buyer guarantee preserved.
 // Change fingerprints only with a reviewed release.
 export const RELEASE_ASSETS = [
-  ['home', 'https://movimentocerto.app/', 'a0c9458019d4f222dc775a91cfde14917dbf4a3ff28df44a048c38acc21632b9'],
+  ['home', 'https://movimentocerto.app/', '059bedbab0ce56a8dd14f24a7e5eae19bb631f43d6cd9335b27171de59a6ec50'],
   ['thanks', 'https://movimentocerto.app/obrigado', '82c895c30ac30a3b4c62a7358e75dc8b1f5d34f657c1bef69ad264ede0fcc23d'],
   ['config', 'https://movimentocerto.app/assets/config.js?v=15', '10cbd36d1cdd59a0497c3f936b590e1a2c9c2301626b65bbd7a74483f69fee23'],
-  ['script', 'https://movimentocerto.app/assets/site.js?v=16', '2aff46a71c56837b0f7c24e387ddacd1389328aa3a7e964e270d66def61a72eb'],
+  ['script', 'https://movimentocerto.app/assets/site.js?v=13', '6fd24e3150195d556f5107a25c1a92a451f46da38680349e199f7dddc7704b47'],
   ['styles', 'https://movimentocerto.app/assets/site.css?v=12', '8adca47bf76c585e1eec56fb87a1073aba93193e2bb8e7eb58319265c455dd12'],
-  ['analytics', 'https://movimentocerto.app/assets/analytics.js?v=2', '1bc528012e54a620a96010deac2d7aa6bad751d68620713e4781d5589f1f7c65'],
+  ['analytics', 'https://movimentocerto.app/assets/analytics.js?v=1', 'd401b900b68582ef1ac8fa8ce638a8556c4e33cd070f6ef9e8d47b451731a747'],
 ];
 
 export function statsProblem(data, now = Date.now()) {
