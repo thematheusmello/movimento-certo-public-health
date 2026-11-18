@@ -82,7 +82,12 @@
     a.textContent = 'Abrindo o pagamento...';
   }
   $all('#checkout-btn, [data-checkout-link]').forEach(function (a) {
-    a.addEventListener('click', function () { syncOffer(); if (open) busy(a); });
+    a.addEventListener('click', function () {
+      syncOffer();
+      if (!open) return;
+      busy(a);
+      if (window.MC_ANALYTICS) window.MC_ANALYTICS.checkoutClick();
+    });
   });
   $all('[data-founder-cta]').forEach(function (a) { a.addEventListener('click', syncOffer); });
   // Coming back from Stripe with the browser's back button restores the page from cache: reset the buttons.
