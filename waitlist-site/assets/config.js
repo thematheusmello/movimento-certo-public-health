@@ -1,6 +1,5 @@
 // Page settings. Edit here and redeploy.
 window.MC_CONFIG = {
-  analyticsMeasurementId: 'G-9FSRCCFT7Y',  // Public GA4 web stream for movimentocerto.app.
   founderOpen: true,                       // true once the Stripe account takes live payments: the buttons then go to /api/checkout
   founderPrice: 'R$ 97',
   founderPriceValue: 97,                   // must match FOUNDER_PRICE_CENTS on the server (api/_lib/site.js)

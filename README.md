@@ -2,7 +2,7 @@
 
 Fixed, read-only checks for https://movimentocerto.app and its public aggregate-health endpoint.
 
-The workflow checks the reviewed homepage, browser configuration, scripts and stylesheet by SHA-256, then validates aggregate endpoint status and freshness. Tests include wrong deadlines, changed assets, unhealthy provider flags and sanitized failures. It never creates Checkout sessions or reads individual customer records. Output contains check names, booleans and static failure reasons.
+The workflow checks the reviewed homepage, browser configuration, script and stylesheet by SHA-256, then validates aggregate endpoint status and freshness. Tests include wrong deadlines, changed assets, unhealthy provider flags and sanitized failures. It never creates Checkout sessions or reads individual customer records. Output contains check names, booleans and static failure reasons.
 
 Standard GitHub-hosted Linux runners run these checks hourly at minute 17 UTC and on explicit dispatch or monitor-source changes. This repository uses no stored service credentials, caches or uploaded build artifacts. Workflow contents access is read-only and official actions are pinned to full commits. GitHub scheduling can be delayed or skipped; public schedules can be disabled after 60 days of repository inactivity. This is limited public-service monitoring, not an uptime guarantee or app/payment acceptance.
 
