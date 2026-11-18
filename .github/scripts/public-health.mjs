@@ -1,12 +1,12 @@
 import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 
-// Reviewed thirty-day campaign calendar with previous-buyer guarantee preserved.
+// Reviewed 29 November campaign calendar.
 // Change fingerprints only with a reviewed release.
 export const RELEASE_ASSETS = [
-  ['home', 'https://movimentocerto.app/', 'f22d82400d4cb71090890555e0b8878012234d5c807eed5a65628b150a926441'],
-  ['thanks', 'https://movimentocerto.app/obrigado', '82c895c30ac30a3b4c62a7358e75dc8b1f5d34f657c1bef69ad264ede0fcc23d'],
-  ['config', 'https://movimentocerto.app/assets/config.js?v=13', '76f3b0c9674a22ed5a3bff9558ba2c2c1d2528a9ce3e9d20dfd2889ee5f32c58'],
+  ['home', 'https://movimentocerto.app/', 'b918c0dfac7d036075792d24f579f5581efa2eaa744a1fe032caaca37f4a4284'],
+  ['thanks', 'https://movimentocerto.app/obrigado', '43fc19f4eca34ac4723a3793063ca44165b9afce6b35c2a2efd94344983afa60'],
+  ['config', 'https://movimentocerto.app/assets/config.js?v=14', 'c179fda924a58206f15c4096e9e01e90b603f720aed1d85fc4aeb4ef29e1e19d'],
   ['script', 'https://movimentocerto.app/assets/site.js?v=12', 'dfb4f7b4bf607c172ea5b39bfd4078aa39e6b22abe5ad5879306d8cc0d13eb0b'],
   ['styles', 'https://movimentocerto.app/assets/site.css?v=11', '31a2d4947a7de68ead285da81726ed9d90cb953421f955be405bfce0d72f9636'],
 ];
@@ -22,7 +22,7 @@ export function statsProblem(data, now = Date.now()) {
 }
 
 export function homeProblem(html) {
-  return typeof html === 'string' && html.includes('Movimento Certo') && html.includes('12 de dezembro')
+  return typeof html === 'string' && html.includes('Movimento Certo') && html.includes('29 de novembro')
     && html.split('elabora a sequência').length === 2
     && createHash('sha256').update(html).digest('hex') === RELEASE_ASSETS[0][2] ? null : 'home_copy';
 }
